@@ -1,0 +1,52 @@
+stages:
+  - test
+  - build
+  - retag
+  - deploy
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE
+  IMAGE_TAG_STABLE: $IMAGE_TAG:stable
+
+test:
+  stage: test
+  image: node:12
+  allow_failure: false
+  script:
+    - npm install
+    - npm run test
+
+build:
+  stage: build
+  allow_failure: false
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - cd loaddriver-master
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG:$CI_COMMIT_SHA --destination $IMAGE_TAG:latest
+
+retag:
+  stage: retag
+  allow_failure: false
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  only:
+    - master
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - echo "FROM $IMAGE_TAG:$CI_COMMIT_SHA" | /kaniko/executor --dockerfile /dev/stdin --destination $IMAGE_TAG_STABLE
+
+deploy-prod:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  allow_failure: false
+  when: manual
+  only:
+    - master
+  script:
+    - kubectl -n sudoku-maker set image deployment/sudoku-maker app=$IMAGE_TAG:$CI_COMMIT_SHA --record

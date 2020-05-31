@@ -7,7 +7,6 @@ stages:
 
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE
-  IMAGE_TAG_STABLE: $IMAGE_TAG:stable
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
@@ -63,7 +62,7 @@ retag:
     - master
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - echo "FROM $IMAGE_TAG:$CI_COMMIT_SHA" | /kaniko/executor --dockerfile /dev/stdin --destination $IMAGE_TAG_STABLE
+    - echo "FROM $IMAGE_TAG:latest" | /kaniko/executor --dockerfile /dev/stdin --destination $IMAGE_TAG:stable
 
 deploy-prod:
   stage: deploy

@@ -24,7 +24,7 @@ install:
   image: cypress/base:10
   stage: install
   script:
-    - npm ci
+    - npm install
     # check Cypress binary path and cached versions
     # useful to make sure we are not carrying around old versions
     - npx cypress cache path

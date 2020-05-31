@@ -1,23 +1,50 @@
 stages:
+  - install
   - test
-  - build
+  - build-image
   - retag
   - deploy
 
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE
   IMAGE_TAG_STABLE: $IMAGE_TAG:stable
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
+
+# cache using branch name
+# https://gitlab.com/help/ci/caching/index.md
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm
+    - cache/Cypress
+    - node_modules
+
+install:
+  image: cypress/base:10
+  stage: install
+  script:
+    - npm ci
+    # check Cypress binary path and cached versions
+    # useful to make sure we are not carrying around old versions
+    - npx cypress cache path
+    - npx cypress cache list
 
 test:
   stage: test
-  image: cypress/included:4.7.0
+  image: cypress/base:10
   allow_failure: false
   script:
-    - npm install
     - npm run test
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**/*.png
+    expire_in: 1 day
 
-build:
-  stage: build
+build-image:
+  stage: build-image
   allow_failure: false
   image:
     name: gcr.io/kaniko-project/executor:debug

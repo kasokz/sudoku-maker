@@ -1,60 +1,71 @@
 <script>
-	export let segment;
+  import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
+
+  export let segment;
 </script>
 
-<style>
-	nav {
-		border-bottom: 1px solid rgba(255,62,0,0.1);
-		font-weight: 300;
-		padding: 0 1em;
-	}
+<style type="scss">
+  a {
+    text-decoration: none;
+  }
 
-	ul {
-		margin: 0;
-		padding: 0;
-	}
+  .nav-links {
+    margin-left: 2em;
+    display: flex;
+    align-items: center;
+    height: 100%;
 
-	/* clearfix */
-	ul::after {
-		content: '';
-		display: block;
-		clear: both;
-	}
+    a {
+      padding: 0 1em;
+      height: 100%;
+      font-size: 1.1em;
+      display: inline-block;
+      vertical-align: middle;
 
-	li {
-		display: block;
-		float: left;
-	}
+      &:before {
+        content: "";
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+      }
 
-	[aria-current] {
-		position: relative;
-		display: inline-block;
-	}
-
-	[aria-current]::after {
-		position: absolute;
-		content: '';
-		width: calc(100% - 1em);
-		height: 2px;
-		background-color: rgb(255,62,0);
-		display: block;
-		bottom: -1px;
-	}
-
-	a {
-		text-decoration: none;
-		padding: 1em 0.5em;
-		display: block;
-	}
+      &.current,
+      &:hover {
+        background: gray;
+        color: white;
+      }
+    }
+  }
 </style>
 
-<nav>
-	<ul>
-		<li><a aria-current='{segment === undefined ? "page" : undefined}' href='.'>home</a></li>
-		<li><a aria-current='{segment === "about" ? "page" : undefined}' href='about'>about</a></li>
-
-		<!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
-		     the blog data when we hover over the link or tap it on a touchscreen -->
-		<li><a rel=prefetch aria-current='{segment === "blog" ? "page" : undefined}' href='blog'>blog</a></li>
-	</ul>
-</nav>
+<TopAppBar dense="true" variant="fixed" color="primary">
+  <Row>
+    <Section>
+      <Title>
+        <a href=".">
+          <b>Sudoku Maker</b>
+        </a>
+      </Title>
+      <div class="nav-links">
+        <a
+          class:current={segment === undefined}
+          aria-current={segment === undefined ? 'page' : undefined}
+          href=".">
+          Home
+        </a>
+        <a
+          class:current={segment === 'blog'}
+          aria-current={segment === 'blog' ? 'page' : undefined}
+          href="blog">
+          Blog
+        </a>
+        <a
+          class:current={segment === 'play'}
+          aria-current={segment === 'play' ? 'page' : undefined}
+          href="play">
+          Play
+        </a>
+      </div>
+    </Section>
+  </Row>
+</TopAppBar>

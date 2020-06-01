@@ -1,22 +1,27 @@
 <script>
-	import Nav from '../components/Nav.svelte';
+	import Nav from "../components/Nav.svelte";
+	import { DenseFixedAdjust } from "@smui/top-app-bar";
 
-	export let segment;
+  export let segment;
 </script>
 
 <style>
-	main {
-		position: relative;
-		max-width: 56em;
-		background-color: white;
-		padding: 2em;
+  main {
+    background-color: white;
 		margin: 0 auto;
-		box-sizing: border-box;
-	}
+		width: 100vw;
+		height: 100vh;
+  }
 </style>
 
-<Nav {segment}/>
+<svelte:head>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+</svelte:head>
 
-<main>
-	<slot></slot>
+<Nav {segment} />
+
+<main use:DenseFixedAdjust>
+  <slot />
 </main>

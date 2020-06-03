@@ -1,11 +1,11 @@
-<script>
-  export let readonly = false;
-  export let topEdge = undefined;
-  export let bottomEdge = undefined;
-  export let rightEdge = undefined;
-  export let leftEdge = undefined;
-  export let value;
-  export let size;
+<script lang="typescript">
+  export let readonly: boolean = false;
+  export let topEdge: undefined | "inside" | "outside" = undefined;
+  export let bottomEdge: undefined | "inside" | "outside" = undefined;
+  export let rightEdge: undefined | "inside" | "outside" = undefined;
+  export let leftEdge: undefined | "inside" | "outside" = undefined;
+  export let value: string;
+  export let size: string;
 </script>
 
 <style type="scss">
